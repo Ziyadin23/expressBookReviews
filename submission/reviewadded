@@ -1,0 +1,11 @@
+$ curl --fail-with-body --silent --show-error -X PUT http://127.0.0.1:5055/customer/auth/review/1 -H Content-Type:\ application/json -b cookies.txt -d \{\"review\":\"A\ compelling\ story\ with\ memorable\ characters.\"\}
+{"message":"Review successfully added.","reviews":{"demo_reader":"A compelling story with memorable characters."}}
+
+$ curl --fail-with-body --silent --show-error http://127.0.0.1:5055/review/1
+{"demo_reader":"A compelling story with memorable characters."}
+
+$ curl --fail-with-body --silent --show-error -X PUT http://127.0.0.1:5055/customer/auth/review/1 -H Content-Type:\ application/json -b cookies.txt -d \{\"review\":\"Updated:\ A\ thoughtful\ exploration\ of\ tradition\ and\ change.\"\}
+{"message":"Review successfully updated.","reviews":{"demo_reader":"Updated: A thoughtful exploration of tradition and change."}}
+
+$ curl --fail-with-body --silent --show-error http://127.0.0.1:5055/review/1
+{"demo_reader":"Updated: A thoughtful exploration of tradition and change."}

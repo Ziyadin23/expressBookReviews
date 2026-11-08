@@ -1,0 +1,2 @@
+$ curl --fail-with-body --silent --show-error http://127.0.0.1:5055/review/1
+{}

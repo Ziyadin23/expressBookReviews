@@ -1,0 +1,5 @@
+$ curl --fail-with-body --silent --show-error -X DELETE http://127.0.0.1:5055/customer/auth/review/1 -b cookies.txt
+{"message":"Review successfully deleted.","reviews":{}}
+
+$ curl --fail-with-body --silent --show-error http://127.0.0.1:5055/review/1
+{}

@@ -1,0 +1,2 @@
+$ curl --fail-with-body --silent --show-error -X POST http://127.0.0.1:5055/customer/login -H Content-Type:\ application/json -c cookies.txt -d \{\"username\":\"demo_reader\"\,\"password\":\"demo-password-123\"\}
+{"message":"User successfully logged in.","username":"demo_reader"}

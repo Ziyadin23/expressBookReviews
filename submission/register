@@ -1,0 +1,2 @@
+$ curl --fail-with-body --silent --show-error -X POST http://127.0.0.1:5055/register -H Content-Type:\ application/json -d \{\"username\":\"demo_reader\"\,\"password\":\"demo-password-123\"\}
+{"message":"User successfully registered. You can now log in.","username":"demo_reader"}
