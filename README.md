@@ -56,6 +56,10 @@ in-memory mutations; simultaneous readers do not block on network or password ha
 Each authenticated user can modify/delete only their own review, regardless of any
 username supplied in the request body.
 
+Successful login stores a signed JWT in the server-side session. Protected review
+routes verify its signature, expiry and username before permitting a write. Tokens
+expire after one hour; the browser or cURL client sends the session cookie.
+
 ## Verify and regenerate submission evidence
 
 ```bash
@@ -67,6 +71,7 @@ npm run evidence
 Tests start and stop their own server on port 5000, so stop `npm start` first.
 They cover the supplied dataset, missing books, invalid credentials, concurrent
 registration and retrieval, and two separate users adding/updating/deleting reviews.
+JWT middleware checks also cover missing, tampered, expired and mismatched tokens.
 
 The evidence script starts a fresh server on port 5055, captures actual commands
 and outputs, checks GitHub's fork metadata, runs the Axios example, and shuts down.
@@ -85,3 +90,5 @@ Restarting resets users and reviews. Session storage is Express's development me
 store. This is a local course project; a deployed service needs persistent storage,
 a shared session store and HTTPS cookies. An optional `SESSION_SECRET` environment
 variable fixes the signing secret; otherwise a random secret is generated on startup.
+Set `JWT_SECRET` to configure the JWT signing key; otherwise a separate random key
+is generated when the server starts.

@@ -1,8 +1,10 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { randomBytes, scrypt, timingSafeEqual } = require('node:crypto');
 const { promisify } = require('node:util');
 const books = require('./booksdb');
 const deriveKey = promisify(scrypt);
+const jwtSecret = process.env.JWT_SECRET || randomBytes(32).toString('hex');
 const regd_users = express.Router();
 const users = new Map();
 
@@ -21,8 +23,13 @@ async function authenticatedUser(username, password) {
 }
 
 function requireLogin(req, res, next) {
-  if (!req.session?.username) return res.status(401).json({ message: 'Please log in first.' });
-  return next();
+  if (req.session?.username && req.session.accessToken) {
+    try {
+      const payload = jwt.verify(req.session.accessToken, jwtSecret, { algorithms: ['HS256'] });
+      if (payload.username === req.session.username) return next();
+    } catch {}
+  }
+  return res.status(401).json({ message: 'Please log in first.' });
 }
 
 regd_users.post('/login', async (req, res, next) => {
@@ -30,9 +37,11 @@ regd_users.post('/login', async (req, res, next) => {
   if (!validCredentials(username, password)) return res.status(400).json({ message: 'A valid username and password are required.' });
   try {
     if (!await authenticatedUser(username, password)) return res.status(401).json({ message: 'Invalid username or password.' });
+    const accessToken = jwt.sign({ username }, jwtSecret, { algorithm: 'HS256', expiresIn: '1h' });
     req.session.regenerate(error => {
       if (error) return next(error);
       req.session.username = username;
+      req.session.accessToken = accessToken;
       return res.json({ message: 'User successfully logged in.', username });
     });
   } catch (error) { next(error); }
